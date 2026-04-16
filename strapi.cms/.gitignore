@@ -1,0 +1,26 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+
+# Strapi generated
+.strapi/
+.tmp/
+.strapi-updater.json
+
+# Environment files
+.env
+.env.production
+
+# Uploads (stored in S3 in production)
+public/uploads/*
+!public/uploads/.gitkeep
+
+# Editor / OS
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+.vscode/
+.idea/
