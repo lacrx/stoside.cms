@@ -44,7 +44,7 @@ RUN echo '{"compilerOptions":{"outDir":"dist"},"include":["_placeholder.ts"]}' >
     chown strapi:strapi tsconfig.json _placeholder.ts
 
 # Strapi needs these dirs at runtime
-RUN mkdir -p .tmp public/uploads && chown -R strapi:strapi .tmp public/uploads
+RUN mkdir -p .tmp public/uploads database/migrations && chown -R strapi:strapi .tmp public/uploads database
 
 USER strapi
 
