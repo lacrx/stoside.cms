@@ -1,0 +1,23 @@
+name: Deploy CMS
+
+on:
+  push:
+    branches: [main, master]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy Strapi CMS to EC2
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ec2-user
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            cd /opt/strapi
+            git pull origin main
+            docker compose -f strapi.cms/docker-compose.prod.yml \
+              --env-file strapi.cms/.env.production \
+              up -d --build --force-recreate strapi
