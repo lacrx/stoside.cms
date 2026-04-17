@@ -47,4 +47,5 @@ function getCodeCommands(files) {
 module.exports = {
   '*.{js,ts,jsx,tsx,json}': getCodeCommands,
   '*.{md,mdx,css,scss,yaml,yml}': ['prettier --write'],
+  'strapi.cms/**/*.{ts,tsx,json}': () => 'npm run typecheck --prefix strapi.cms',
 };

@@ -10,7 +10,8 @@
     "dev": "strapi develop",
     "develop": "strapi develop",
     "start": "strapi start",
-    "strapi": "strapi"
+    "strapi": "strapi",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@strapi/plugin-graphql": "^5.42.0",
