@@ -14,6 +14,9 @@
   "attributes": {
     "instagramUrl": {
       "type": "string"
+    },
+    "meetupUrl": {
+      "type": "string"
     }
   }
 }

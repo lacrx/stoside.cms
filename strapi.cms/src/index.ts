@@ -34,18 +34,35 @@ export default {
     }
 
     // Seed the single Site Settings record on first boot so the Gatsby
-    // build has something to fetch. Existing records are left untouched
-    // so edits made through the admin UI are preserved across restarts.
+    // build has something to fetch. Edits made through the admin UI are
+    // preserved across restarts; only fields that are still empty get
+    // backfilled with defaults when new fields are added to the schema.
     try {
+      const defaults = {
+        instagramUrl: 'https://www.instagram.com/strongtowns.oceanside/',
+        meetupUrl: 'https://www.meetup.com/north-county-urbanists/',
+      };
+
       const existing = await strapi
         .documents('api::site-setting.site-setting')
         .findFirst({ status: 'published' });
 
       if (!existing) {
         await strapi.documents('api::site-setting.site-setting').create({
-          data: { instagramUrl: 'https://www.instagram.com/strongtowns.oceanside/' },
+          data: defaults,
           status: 'published',
         });
+      } else {
+        const patches = Object.fromEntries(
+          Object.entries(defaults).filter(([key]) => !existing[key])
+        );
+        if (Object.keys(patches).length > 0) {
+          await strapi.documents('api::site-setting.site-setting').update({
+            documentId: existing.documentId,
+            data: patches,
+            status: 'published',
+          });
+        }
       }
     } catch (err) {
       strapi.log.warn(`[bootstrap] Could not seed site-setting: ${(err as Error).message}`);
