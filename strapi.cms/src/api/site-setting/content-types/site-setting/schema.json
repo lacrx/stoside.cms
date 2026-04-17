@@ -1,0 +1,19 @@
+{
+  "kind": "singleType",
+  "collectionName": "site_settings",
+  "info": {
+    "singularName": "site-setting",
+    "pluralName": "site-settings",
+    "displayName": "Site Settings",
+    "description": "Global site configuration (social links, etc.) edited by the Strapi admin and consumed by the Gatsby frontend at build time."
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "instagramUrl": {
+      "type": "string"
+    }
+  }
+}
