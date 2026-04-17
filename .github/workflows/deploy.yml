@@ -16,8 +16,12 @@ jobs:
           username: ec2-user
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            cd /opt/strapi
-            git pull origin main
-            docker compose -f strapi.cms/docker-compose.prod.yml \
-              --env-file strapi.cms/.env.production \
+            set -e
+            cd /opt/strapi/stoside.cms
+            git fetch origin main
+            git checkout main 2>/dev/null || git checkout -b main origin/main
+            git merge --ff-only origin/main
+            cd strapi.cms
+            docker compose -f docker-compose.prod.yml \
+              --env-file .env.production \
               up -d --build --force-recreate strapi
