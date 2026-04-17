@@ -22,7 +22,7 @@ services:
       - strapi
 
   strapi:
-    build: .
+    image: ghcr.io/lacrx/stoside.cms:latest
     restart: unless-stopped
     env_file: .env.production
     ports:
