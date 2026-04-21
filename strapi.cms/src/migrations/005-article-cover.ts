@@ -1,5 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import crypto from 'node:crypto';
 import type { Core } from '@strapi/strapi';
 
 // Upload the desktop poster JPG as a Strapi media file and link it to
@@ -25,11 +26,27 @@ export const migration = {
       return;
     }
 
-    // 1. Reuse or upload.
-    let media = await strapi.query('plugin::upload.file').findOne({ where: { name: fileName } });
+    // 1. Reuse or (re)upload. We re-upload when the file content has
+    //    changed vs what Strapi already has, detected via a SHA-256 of
+    //    the first 16 KB stored in the media's caption field. This lets
+    //    frontend-side poster regenerations propagate to the Strapi-
+    //    managed cover without needing a new filename per version.
+    const stats = fs.statSync(filePath);
+    const diskSizeKb = Math.round(stats.size / 1024);
+    const headBuf = fs.readFileSync(filePath).subarray(0, 16 * 1024);
+    const diskHash = crypto.createHash('sha256').update(headBuf).digest('hex').slice(0, 16);
+    const freshTag = `h:${diskHash}`;
 
-    if (!media) {
-      const stats = fs.statSync(filePath);
+    let media = await strapi.query('plugin::upload.file').findOne({ where: { name: fileName } });
+    const storedTag = media?.caption ?? null;
+
+    if (media && storedTag === freshTag && media.size === diskSizeKb) {
+      // No drift; reuse existing media.
+    } else {
+      if (media) {
+        await strapi.plugin('upload').service('upload').remove(media);
+        strapi.log.info(`[migration:005-article-cover] removed stale ${fileName}`);
+      }
       const uploaded = (await strapi
         .plugin('upload')
         .service('upload')
@@ -39,6 +56,9 @@ export const migration = {
               name: fileName,
               alternativeText:
                 'Value per acre map of Oceanside parcels, rendered as 3D extrusions over streets and water.',
+              // Stash the content hash in caption so the next migration
+              // run can cheaply detect drift. Not user-facing.
+              caption: freshTag,
             },
           },
           files: {
@@ -49,7 +69,7 @@ export const migration = {
           },
         })) as Array<{ id: number }>;
       media = uploaded[0];
-      strapi.log.info(`[migration:005-article-cover] uploaded ${fileName}`);
+      strapi.log.info(`[migration:005-article-cover] uploaded ${fileName} (${freshTag})`);
     }
 
     // 2. Link to the article.
