@@ -5,7 +5,7 @@ import { migration as m003 } from './003-author-thomas-lacroix';
 import { migration as m004 } from './004-our-wealth-is-downtown';
 
 // Add new migrations in chronological order. Each migration is a
-// check-then-mutate step against Strapi's Document Service API — running
+// check-then-mutate step against Strapi's Document Service API. Running
 // them on every boot is safe (idempotent) because presence is always
 // checked before any write.
 //

@@ -1,9 +1,8 @@
 import type { Core } from '@strapi/strapi';
 
-// Seed the "Our Wealth is Downtown" article — demonstrates the visualization
-// block workflow by pairing the original Learn-page copy with the
-// oceanside-vpa-3d viz. Idempotent on slug; backfills the author link if the
-// article existed before the author migration ran.
+// Seed the "Our Wealth is Downtown" article. Idempotent on slug; also
+// backfills the author link if the article existed before the author
+// migration ran.
 export const migration = {
   id: '004-our-wealth-is-downtown',
   description: 'Seed article "our-wealth-is-downtown" + link it to Thomas LaCroix',
@@ -13,7 +12,7 @@ export const migration = {
       .documents('api::author.author')
       .findFirst({ filters: { name: 'Thomas LaCroix' } });
     if (!author) {
-      strapi.log.warn(`[migration:004-our-wealth-is-downtown] author not found — run 003 first`);
+      strapi.log.warn(`[migration:004-our-wealth-is-downtown] author not found, run 003 first`);
       return;
     }
 
@@ -27,8 +26,7 @@ export const migration = {
       await strapi.documents('api::article.article').create({
         data: {
           title: 'Our Wealth is Downtown.',
-          description:
-            'Why downtown pays for the rest of Oceanside — and what we should do about it.',
+          description: 'A value-per-acre map of every parcel in Oceanside.',
           slug,
           author: author.documentId,
           blocks: [

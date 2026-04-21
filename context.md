@@ -1,4 +1,4 @@
-# Strapi CMS — Backend App Context
+# Strapi CMS, Backend App Context
 
 > Reference document for AWS architecture planning.
 
@@ -79,7 +79,7 @@ articles_author_lnk          (relation junction)
 
 ## API Surface
 
-All controllers, services, and routes use **default Strapi core factories** — no custom logic.
+All controllers, services, and routes use **default Strapi core factories**, no custom logic.
 
 | Method | Endpoint            | Notes                                       |
 | ------ | ------------------- | ------------------------------------------- |
@@ -111,7 +111,7 @@ Standard Strapi defaults (from `config/middlewares.ts`):
 
 ## Configuration & Environment Variables
 
-### Current `.env` (development — all values are placeholders)
+### Current `.env` (development, all values are placeholders)
 
 ```
 HOST=0.0.0.0
@@ -158,7 +158,7 @@ Configured to use **AWS S3** via `@strapi/provider-upload-aws-s3` in `config/plu
 | `AWS_REGION`    | S3 bucket region              |
 | `AWS_S3_BUCKET` | Bucket name for media uploads |
 
-On ECS Fargate, authentication uses the **task IAM role** — no access key env vars needed.
+On ECS Fargate, authentication uses the **task IAM role**, no access key env vars needed.
 
 The security middleware (`config/middlewares.ts`) has been updated to allow `*.amazonaws.com` in CSP `img-src` and `media-src` directives.
 
@@ -177,9 +177,9 @@ No email provider configured. Available in the monorepo:
 
 Multi-stage build:
 
-1. **deps** — production `node_modules` only
-2. **build** — full install + `strapi build` (compiles admin panel)
-3. **runner** — copies built assets, runs as non-root `strapi` user on port 1337
+1. **deps**, production `node_modules` only
+2. **build**, full install + `strapi build` (compiles admin panel)
+3. **runner**, copies built assets, runs as non-root `strapi` user on port 1337
 
 Base image: `node:22-alpine`
 
@@ -196,7 +196,7 @@ Excludes `node_modules`, `.tmp`, `.env`, `.git`, etc.
 
 - Same services with separate test databases (`strapi_test`)
 
-**No Dockerfile exists** — the app runs directly in Node.js, not yet containerized.
+**No Dockerfile exists**, the app runs directly in Node.js, not yet containerized.
 
 ## Domain
 
@@ -220,7 +220,7 @@ Strapi (:1337)
       └── Rich text blocks
 ```
 
-The frontend fetches all data at **build time only** — Strapi does not serve end-user traffic directly.
+The frontend fetches all data at **build time only**, Strapi does not serve end-user traffic directly.
 
 ## AWS Architecture Considerations
 
@@ -240,9 +240,9 @@ The frontend fetches all data at **build time only** — Strapi does not serve e
 
 ### File / Media Storage
 
-- Configure `@strapi/provider-upload-aws-s3` for media uploads (article cover images). **(Done — configured in `config/plugins.ts`)**
+- Configure `@strapi/provider-upload-aws-s3` for media uploads (article cover images). **(Done, configured in `config/plugins.ts`)**
 - **S3 bucket** for uploads + **CloudFront** distribution for serving media (`media.stoside.org`).
-- ECS task IAM role grants S3 access — no access key env vars needed.
+- ECS task IAM role grants S3 access, no access key env vars needed.
 
 ### Secrets Management
 
@@ -255,7 +255,7 @@ The frontend fetches all data at **build time only** — Strapi does not serve e
 
 - **ALB** in front of ECS Fargate, targeting port 1337.
 - Place in a **private subnet**; only ALB is public-facing.
-- The Gatsby frontend build pipeline needs network access to Strapi's `/graphql` endpoint — either via ALB or VPC-internal service discovery.
+- The Gatsby frontend build pipeline needs network access to Strapi's `/graphql` endpoint, either via ALB or VPC-internal service discovery.
 - CORS middleware may need configuration if admin panel is accessed on a different domain.
 
 ### Build Pipeline Trigger
@@ -272,7 +272,7 @@ The frontend fetches all data at **build time only** — Strapi does not serve e
 
 ### Scaling & Availability
 
-- Strapi is stateful (admin sessions, file uploads) — with S3 for uploads and RDS for data, it becomes stateless enough for horizontal scaling.
+- Strapi is stateful (admin sessions, file uploads), with S3 for uploads and RDS for data, it becomes stateless enough for horizontal scaling.
 - **Auto Scaling** on ECS tasks (CPU/memory target tracking).
 - RDS Multi-AZ for high availability.
 
@@ -281,4 +281,4 @@ The frontend fetches all data at **build time only** — Strapi does not serve e
 - Fargate Spot for non-critical environments (dev/staging).
 - RDS `db.t4g.micro` sufficient for low-traffic CMS.
 - S3 Intelligent-Tiering for media if volume grows.
-- The CMS only needs to handle admin users + build-time fetches — very low traffic.
+- The CMS only needs to handle admin users + build-time fetches, very low traffic.
