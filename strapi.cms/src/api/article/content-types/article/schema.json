@@ -30,7 +30,7 @@
     },
     "blocks": {
       "type": "dynamiczone",
-      "components": ["shared.rich-text"]
+      "components": ["shared.rich-text", "shared.visualization"]
     },
     "author": {
       "type": "relation",

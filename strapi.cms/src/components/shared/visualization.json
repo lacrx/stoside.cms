@@ -1,0 +1,29 @@
+{
+  "collectionName": "components_shared_visualizations",
+  "info": {
+    "displayName": "Visualization",
+    "icon": "chart-pie",
+    "description": "Embed a pre-built data visualization by id. The id must match a folder name under frontend/src/assets/visualizations/."
+  },
+  "options": {},
+  "attributes": {
+    "vizId": {
+      "type": "string",
+      "required": true
+    },
+    "caption": {
+      "type": "text"
+    },
+    "height": {
+      "type": "integer",
+      "default": 520,
+      "min": 160,
+      "max": 1200
+    },
+    "align": {
+      "type": "enumeration",
+      "enum": ["inline", "wide", "full-bleed"],
+      "default": "inline"
+    }
+  }
+}
