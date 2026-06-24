@@ -3,6 +3,7 @@ name: Deploy CMS
 on:
   push:
     branches: [main, master]
+  workflow_dispatch:
 
 jobs:
   build-and-push:
@@ -61,3 +62,35 @@ jobs:
             docker compose -f docker-compose.prod.yml --env-file .env.production pull strapi
             docker compose -f docker-compose.prod.yml --env-file .env.production up -d --force-recreate strapi
             docker logout ghcr.io
+
+      - name: Wait for Strapi to be healthy
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ec2-user
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            echo "Waiting for Strapi to start..."
+            for i in $(seq 1 30); do
+              if curl -sf http://localhost:1337/api/articles > /dev/null 2>&1; then
+                echo "Strapi is healthy after $i attempts"
+                exit 0
+              fi
+              echo "Attempt $i/30..."
+              sleep 10
+            done
+            echo "Strapi did not become healthy in time"
+            exit 1
+
+  trigger-frontend:
+    needs: deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger frontend rebuild
+        run: |
+          curl -sf -X POST \
+            -H "Authorization: token ${{ secrets.FRONTEND_DEPLOY_TOKEN }}" \
+            -H "Accept: application/vnd.github+json" \
+            https://api.github.com/repos/lacrx/stoside.frontend/dispatches \
+            -d '{"event_type":"cms-deploy","client_payload":{"sha":"${{ github.sha }}"}}'
+          echo "Frontend rebuild triggered"
