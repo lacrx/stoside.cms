@@ -32,9 +32,9 @@
       "type": "dynamiczone",
       "components": ["shared.rich-text", "shared.visualization"]
     },
-    "author": {
+    "authors": {
       "type": "relation",
-      "relation": "manyToOne",
+      "relation": "manyToMany",
       "target": "api::author.author",
       "inversedBy": "articles"
     }

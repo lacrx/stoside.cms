@@ -75,22 +75,23 @@ async function up(knex) {
   }
 
   // ---------------------------------------------------------------
-  // Relation link table: articles_author_lnk
-  // (Many articles → one author)
+  // Relation link table: articles_authors_lnk
+  // (Many articles ↔ many authors)
   // ---------------------------------------------------------------
-  const hasArticlesAuthorLnk = await knex.schema.hasTable('articles_author_lnk');
-  if (!hasArticlesAuthorLnk) {
-    await knex.schema.createTable('articles_author_lnk', (table) => {
+  const hasArticlesAuthorsLnk = await knex.schema.hasTable('articles_authors_lnk');
+  if (!hasArticlesAuthorsLnk) {
+    await knex.schema.createTable('articles_authors_lnk', (table) => {
       table.increments('id').primary();
       table.integer('article_id').unsigned();
       table.integer('author_id').unsigned();
       table.integer('article_ord').unsigned();
+      table.integer('author_ord').unsigned();
     });
   }
 }
 
 async function down(knex) {
-  await knex.schema.dropTableIfExists('articles_author_lnk');
+  await knex.schema.dropTableIfExists('articles_authors_lnk');
   await knex.schema.dropTableIfExists('articles_components');
   await knex.schema.dropTableIfExists('components_shared_rich_texts');
   await knex.schema.dropTableIfExists('articles');

@@ -17,6 +17,7 @@ export const migration = {
       strapi.log.warn(`[migration:004-our-wealth-is-downtown] author not found, run 003 first`);
       return;
     }
+    const authors = [author.documentId];
 
     const existing = await strapi
       .documents('api::article.article')
@@ -28,7 +29,7 @@ export const migration = {
           title: 'Our Wealth is Downtown.',
           description: 'A value-per-acre map of every parcel in Oceanside.',
           slug,
-          author: author.documentId,
+          authors,
           blocks: [
             {
               __component: 'shared.rich-text',
@@ -64,7 +65,7 @@ export const migration = {
         title: 'Our Wealth is Downtown.',
         description: 'A value-per-acre map of every parcel in Oceanside.',
         slug,
-        author: author.documentId,
+        authors,
         blocks: [
           {
             __component: 'shared.rich-text',
