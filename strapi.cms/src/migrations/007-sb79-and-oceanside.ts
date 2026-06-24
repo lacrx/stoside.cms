@@ -117,7 +117,11 @@ export const migration = {
   async run(strapi: Core.Strapi) {
     // Upload cover image if asset is available
     let coverId: number | undefined;
-    const filePath = path.join(strapi.dirs.app.src, 'migrations', 'assets', COVER_FILE);
+    const filePath =
+      [
+        path.join(__dirname, 'assets', COVER_FILE),
+        path.join(strapi.dirs.app.src, 'migrations', 'assets', COVER_FILE),
+      ].find((p) => fs.existsSync(p)) ?? '';
     if (fs.existsSync(filePath)) {
       let media = await strapi
         .query('plugin::upload.file')

@@ -19,7 +19,11 @@ export const migration = {
     // Resolve against strapi.dirs.app.src so we always read from the
     // source tree, not the compiled dist directory where assets don't
     // get copied by default.
-    const filePath = path.join(strapi.dirs.app.src, 'migrations', 'assets', fileName);
+    const filePath =
+      [
+        path.join(__dirname, 'assets', fileName),
+        path.join(strapi.dirs.app.src, 'migrations', 'assets', fileName),
+      ].find((p) => fs.existsSync(p)) ?? '';
 
     if (!fs.existsSync(filePath)) {
       strapi.log.warn(`[migration:005-article-cover] missing asset ${filePath}`);
