@@ -115,23 +115,7 @@ export const migration = {
   id: '007-sb79-and-oceanside',
   description: 'Seed article "SB79 And Oceanside" with cover image',
   async run(strapi: Core.Strapi) {
-    const existing = await strapi
-      .documents('api::article.article')
-      .findFirst({ filters: { slug: SLUG }, status: 'published' });
-    if (existing) return;
-
-    const authorNames = ['Spencer Domingue-Sanford', 'Thomas LaCroix'];
-    const authors: string[] = [];
-    for (const name of authorNames) {
-      const author = await strapi.documents('api::author.author').findFirst({ filters: { name } });
-      if (!author) {
-        strapi.log.warn(`[migration:007-sb79-and-oceanside] author "${name}" not found`);
-        return;
-      }
-      authors.push(author.documentId);
-    }
-
-    // Upload cover image if asset is available (not present in Docker builds)
+    // Upload cover image if asset is available
     let coverId: number | undefined;
     const filePath = path.join(strapi.dirs.app.src, 'migrations', 'assets', COVER_FILE);
     if (fs.existsSync(filePath)) {
@@ -165,6 +149,34 @@ export const migration = {
         strapi.log.info(`[migration:007-sb79-and-oceanside] uploaded ${COVER_FILE}`);
       }
       coverId = media.id;
+    }
+
+    const existing = await strapi
+      .documents('api::article.article')
+      .findFirst({ filters: { slug: SLUG }, populate: ['cover'], status: 'published' });
+
+    if (existing) {
+      const currentCoverId = (existing as { cover?: { id?: number } }).cover?.id;
+      if (coverId && currentCoverId !== coverId) {
+        await strapi.documents('api::article.article').update({
+          documentId: existing.documentId,
+          data: { cover: coverId },
+          status: 'published',
+        });
+        strapi.log.info(`[migration:007-sb79-and-oceanside] linked cover to existing article`);
+      }
+      return;
+    }
+
+    const authorNames = ['Spencer Domingue-Sanford', 'Thomas LaCroix'];
+    const authors: string[] = [];
+    for (const name of authorNames) {
+      const author = await strapi.documents('api::author.author').findFirst({ filters: { name } });
+      if (!author) {
+        strapi.log.warn(`[migration:007-sb79-and-oceanside] author "${name}" not found`);
+        return;
+      }
+      authors.push(author.documentId);
     }
 
     await strapi.documents('api::article.article').create({
