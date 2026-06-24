@@ -1,17 +1,16 @@
-import fs from 'node:fs';
-import path from 'node:path';
-import crypto from 'node:crypto';
 import type { Core } from '@strapi/strapi';
 
 const SLUG = 'sb79-and-oceanside';
 const COVER_FILE = 'sb79-oceanside-transit-center.jpeg';
+const COVER_URL =
+  'https://substackcdn.com/image/fetch/w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F2875ba29-cc83-4424-bcc0-e7b6c9b533c1_4609x3470.jpeg';
 
 const IMG_BASE = 'https://substack-post-media.s3.amazonaws.com/public/images';
 
 const blocks = [
   {
     __component: 'shared.rich-text' as const,
-    body: `![Oceanside Transit Center; (Edwang2, CC BY-SA 4.0)](${IMG_BASE}/2875ba29-cc83-4424-bcc0-e7b6c9b533c1_4609x3470.jpeg)
+    body: `![Oceanside Transit Center; (Edwang2, CC BY-SA 4.0)](https://substackcdn.com/image/fetch/w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F2875ba29-cc83-4424-bcc0-e7b6c9b533c1_4609x3470.jpeg)
 
 SB 79 takes full effect statewide on July 1, 2026. The premise is straightforward: let people build multi-family homes, townhomes, and mixed-use apartments within a half-mile of high-capacity transit stations.
 
@@ -117,59 +116,32 @@ export const migration = {
   id: '007-sb79-and-oceanside',
   description: 'Seed article "SB79 And Oceanside" with cover image',
   async run(strapi: Core.Strapi) {
-    // Upload cover image (non-fatal — article still gets created/refreshed without it)
+    // Register cover as an external URL in the upload file table (bypasses
+    // the S3 upload provider which requires bucket credentials).
     let coverId: number | undefined;
     try {
       let media = await strapi
         .query('plugin::upload.file')
         .findOne({ where: { name: COVER_FILE } });
       if (!media) {
-        let filePath =
-          [
-            path.join(__dirname, 'assets', COVER_FILE),
-            path.join(strapi.dirs.app.src, 'migrations', 'assets', COVER_FILE),
-          ].find((p) => fs.existsSync(p)) ?? '';
-
-        if (!filePath) {
-          const tmpPath = path.join('/tmp', COVER_FILE);
-          const res = await fetch(
-            `${IMG_BASE}/2875ba29-cc83-4424-bcc0-e7b6c9b533c1_4609x3470.jpeg`
-          );
-          if (res.ok) {
-            fs.writeFileSync(tmpPath, Buffer.from(await res.arrayBuffer()));
-            filePath = tmpPath;
-          }
-        }
-
-        if (filePath) {
-          const stats = fs.statSync(filePath);
-          const uploaded = (await strapi
-            .plugin('upload')
-            .service('upload')
-            .upload({
-              data: {
-                fileInfo: {
-                  name: COVER_FILE,
-                  alternativeText: 'Oceanside Transit Center, photo by Edwang2 (CC BY-SA 4.0)',
-                  caption: '',
-                },
-              },
-              files: {
-                path: filePath,
-                name: COVER_FILE,
-                type: 'image/jpeg',
-                size: stats.size,
-              },
-            })) as Array<{ id: number }>;
-          media = uploaded[0];
-          strapi.log.info(`[migration:007-sb79-and-oceanside] uploaded ${COVER_FILE}`);
-        }
+        media = await strapi.query('plugin::upload.file').create({
+          data: {
+            name: COVER_FILE,
+            alternativeText: 'Oceanside Transit Center, photo by Edwang2 (CC BY-SA 4.0)',
+            url: COVER_URL,
+            mime: 'image/jpeg',
+            ext: '.jpeg',
+            size: 3300,
+            width: 1456,
+            height: 1096,
+            provider: 'external',
+          },
+        });
+        strapi.log.info(`[migration:007-sb79-and-oceanside] registered cover ${COVER_FILE}`);
       }
       if (media) coverId = media.id;
     } catch (err) {
-      strapi.log.warn(
-        `[migration:007-sb79-and-oceanside] cover upload failed: ${(err as Error).message}`
-      );
+      strapi.log.warn(`[migration:007-sb79-and-oceanside] cover failed: ${(err as Error).message}`);
     }
 
     const existing = await strapi
