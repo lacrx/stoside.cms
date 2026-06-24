@@ -6,6 +6,7 @@ import { migration as m004 } from './004-our-wealth-is-downtown';
 import { migration as m005 } from './005-article-cover';
 import { migration as m006 } from './006-authors';
 import { migration as m007 } from './007-sb79-and-oceanside';
+import { migration as m008 } from './008-fix-sb79-description';
 
 // Add new migrations in chronological order. Each migration is a
 // check-then-mutate step against Strapi's Document Service API. Running
@@ -19,7 +20,7 @@ import { migration as m007 } from './007-sb79-and-oceanside';
 // Prefer this pattern over raw knex migrations under database/migrations/:
 // content migrations need entity-service access to hit dynamic-zone joins,
 // permissions, uploads, etc., which raw SQL can't express safely.
-const migrations = [m001, m002, m003, m004, m005, m006, m007];
+const migrations = [m001, m002, m003, m004, m005, m006, m007, m008];
 
 export async function runMigrations(strapi: Core.Strapi) {
   for (const migration of migrations) {
