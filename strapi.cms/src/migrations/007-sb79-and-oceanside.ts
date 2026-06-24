@@ -11,7 +11,9 @@ const IMG_BASE = 'https://substack-post-media.s3.amazonaws.com/public/images';
 const blocks = [
   {
     __component: 'shared.rich-text' as const,
-    body: `SB 79 takes full effect statewide on July 1, 2026. The premise is straightforward: let people build multi-family homes, townhomes, and mixed-use apartments within a half-mile of high-capacity transit stations.
+    body: `![Oceanside Transit Center; (Edwang2, CC BY-SA 4.0)](${IMG_BASE}/2875ba29-cc83-4424-bcc0-e7b6c9b533c1_4609x3470.jpeg)
+
+SB 79 takes full effect statewide on July 1, 2026. The premise is straightforward: let people build multi-family homes, townhomes, and mixed-use apartments within a half-mile of high-capacity transit stations.
 
 On June 3, the Oceanside City Council voted 4-0 (Council member Weiss was absent) to introduce an ordinance that explicitly seeks to "exempt and/or defer all sites that could potentially be exempted or deferred" and "reduce SB 79's impact to the greatest extent possible." The deferral runs until one year after the 7th Housing Element revision on June 15, 2032, which is six years from now.
 
@@ -160,15 +162,15 @@ export const migration = {
       .findFirst({ filters: { slug: SLUG }, populate: ['cover'], status: 'published' });
 
     if (existing) {
-      const currentCoverId = (existing as { cover?: { id?: number } }).cover?.id;
-      if (coverId && currentCoverId !== coverId) {
-        await strapi.documents('api::article.article').update({
-          documentId: existing.documentId,
-          data: { cover: coverId },
-          status: 'published',
-        });
-        strapi.log.info(`[migration:007-sb79-and-oceanside] linked cover to existing article`);
-      }
+      await strapi.documents('api::article.article').update({
+        documentId: existing.documentId,
+        data: {
+          blocks,
+          ...(coverId ? { cover: coverId } : {}),
+        },
+        status: 'published',
+      });
+      strapi.log.info(`[migration:007-sb79-and-oceanside] refreshed existing article`);
       return;
     }
 
