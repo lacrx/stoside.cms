@@ -38,6 +38,7 @@ WORKDIR /app
 COPY --from=deps  --chown=strapi:strapi /app/node_modules ./node_modules
 COPY --from=build --chown=strapi:strapi /app/dist         ./dist
 COPY --from=build --chown=strapi:strapi /app/public        ./public
+COPY --from=build --chown=strapi:strapi /app/src/migrations/assets ./dist/src/migrations/assets
 COPY --chown=strapi:strapi package.json ./
 RUN echo '{"compilerOptions":{"outDir":"dist"},"include":["_placeholder.ts"]}' > tsconfig.json && \
     echo 'export {}' > _placeholder.ts && \

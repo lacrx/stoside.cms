@@ -131,39 +131,40 @@ export const migration = {
       authors.push(author.documentId);
     }
 
-    // Upload cover image
+    // Upload cover image if asset is available (not present in Docker builds)
+    let coverId: number | undefined;
     const filePath = path.join(strapi.dirs.app.src, 'migrations', 'assets', COVER_FILE);
-    if (!fs.existsSync(filePath)) {
-      strapi.log.warn(`[migration:007-sb79-and-oceanside] missing asset ${filePath}`);
-      return;
-    }
+    if (fs.existsSync(filePath)) {
+      let media = await strapi
+        .query('plugin::upload.file')
+        .findOne({ where: { name: COVER_FILE } });
+      if (!media) {
+        const stats = fs.statSync(filePath);
+        const headBuf = fs.readFileSync(filePath).subarray(0, 16 * 1024);
+        const diskHash = crypto.createHash('sha256').update(headBuf).digest('hex').slice(0, 16);
 
-    let media = await strapi.query('plugin::upload.file').findOne({ where: { name: COVER_FILE } });
-    if (!media) {
-      const stats = fs.statSync(filePath);
-      const headBuf = fs.readFileSync(filePath).subarray(0, 16 * 1024);
-      const diskHash = crypto.createHash('sha256').update(headBuf).digest('hex').slice(0, 16);
-
-      const uploaded = (await strapi
-        .plugin('upload')
-        .service('upload')
-        .upload({
-          data: {
-            fileInfo: {
-              name: COVER_FILE,
-              alternativeText: 'Oceanside Transit Center, photo by Edwang2 (CC BY-SA 4.0)',
-              caption: `h:${diskHash}`,
+        const uploaded = (await strapi
+          .plugin('upload')
+          .service('upload')
+          .upload({
+            data: {
+              fileInfo: {
+                name: COVER_FILE,
+                alternativeText: 'Oceanside Transit Center, photo by Edwang2 (CC BY-SA 4.0)',
+                caption: `h:${diskHash}`,
+              },
             },
-          },
-          files: {
-            path: filePath,
-            name: COVER_FILE,
-            type: 'image/jpeg',
-            size: stats.size,
-          },
-        })) as Array<{ id: number }>;
-      media = uploaded[0];
-      strapi.log.info(`[migration:007-sb79-and-oceanside] uploaded ${COVER_FILE}`);
+            files: {
+              path: filePath,
+              name: COVER_FILE,
+              type: 'image/jpeg',
+              size: stats.size,
+            },
+          })) as Array<{ id: number }>;
+        media = uploaded[0];
+        strapi.log.info(`[migration:007-sb79-and-oceanside] uploaded ${COVER_FILE}`);
+      }
+      coverId = media.id;
     }
 
     await strapi.documents('api::article.article').create({
@@ -171,9 +172,9 @@ export const migration = {
         title: 'SB79 And Oceanside',
         description: "Oceanside's relentless effort to assert their right to block housing.",
         slug: SLUG,
-        cover: media.id,
         authors,
         blocks,
+        ...(coverId ? { cover: coverId } : {}),
       },
       status: 'published',
     });
