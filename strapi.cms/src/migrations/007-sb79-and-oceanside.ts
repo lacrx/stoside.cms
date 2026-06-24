@@ -3,10 +3,10 @@ import type { Core } from '@strapi/strapi';
 const SLUG = 'sb79-and-oceanside';
 const COVER_FILE = 'sb79-oceanside-transit-center.jpeg';
 const COVER_URL =
-  'https://substackcdn.com/image/fetch/w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F2875ba29-cc83-4424-bcc0-e7b6c9b533c1_4609x3470.jpeg';
+  'https://substackcdn.com/image/fetch/w_2100,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F2875ba29-cc83-4424-bcc0-e7b6c9b533c1_4609x3470.jpeg';
 
 const IMG_CDN =
-  'https://substackcdn.com/image/fetch/w_720,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F';
+  'https://substackcdn.com/image/fetch/w_600,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F';
 
 const blocks = [
   {
@@ -131,8 +131,8 @@ export const migration = {
             mime: 'image/jpeg',
             ext: '.jpeg',
             size: 3300,
-            width: 1456,
-            height: 1096,
+            width: 2100,
+            height: 1582,
             provider: 'external',
           },
         });
