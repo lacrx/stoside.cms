@@ -174,7 +174,7 @@ export const migration = {
     await strapi.documents('api::article.article').create({
       data: {
         title: 'SB79 And Oceanside',
-        description: "Oceanside's relentless effort to assert their right to block housing.",
+        description: "Oceanside's relentless fight for their right to block housing.",
         slug: SLUG,
         authors,
         blocks,
