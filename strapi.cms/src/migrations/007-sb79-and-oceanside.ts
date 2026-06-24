@@ -117,22 +117,33 @@ export const migration = {
   id: '007-sb79-and-oceanside',
   description: 'Seed article "SB79 And Oceanside" with cover image',
   async run(strapi: Core.Strapi) {
-    // Upload cover image if asset is available
+    // Upload cover image — try local asset first, fall back to remote download
     let coverId: number | undefined;
-    const filePath =
-      [
-        path.join(__dirname, 'assets', COVER_FILE),
-        path.join(strapi.dirs.app.src, 'migrations', 'assets', COVER_FILE),
-      ].find((p) => fs.existsSync(p)) ?? '';
-    if (fs.existsSync(filePath)) {
-      let media = await strapi
-        .query('plugin::upload.file')
-        .findOne({ where: { name: COVER_FILE } });
-      if (!media) {
-        const stats = fs.statSync(filePath);
-        const headBuf = fs.readFileSync(filePath).subarray(0, 16 * 1024);
-        const diskHash = crypto.createHash('sha256').update(headBuf).digest('hex').slice(0, 16);
+    let media = await strapi.query('plugin::upload.file').findOne({ where: { name: COVER_FILE } });
+    if (!media) {
+      let filePath =
+        [
+          path.join(__dirname, 'assets', COVER_FILE),
+          path.join(strapi.dirs.app.src, 'migrations', 'assets', COVER_FILE),
+        ].find((p) => fs.existsSync(p)) ?? '';
 
+      if (!filePath) {
+        const tmpPath = path.join('/tmp', COVER_FILE);
+        try {
+          const res = await fetch(
+            `${IMG_BASE}/2875ba29-cc83-4424-bcc0-e7b6c9b533c1_4609x3470.jpeg`
+          );
+          if (res.ok) {
+            fs.writeFileSync(tmpPath, Buffer.from(await res.arrayBuffer()));
+            filePath = tmpPath;
+          }
+        } catch {
+          // network unavailable — skip cover
+        }
+      }
+
+      if (filePath) {
+        const stats = fs.statSync(filePath);
         const uploaded = (await strapi
           .plugin('upload')
           .service('upload')
@@ -141,7 +152,7 @@ export const migration = {
               fileInfo: {
                 name: COVER_FILE,
                 alternativeText: 'Oceanside Transit Center, photo by Edwang2 (CC BY-SA 4.0)',
-                caption: `h:${diskHash}`,
+                caption: '',
               },
             },
             files: {
@@ -154,8 +165,8 @@ export const migration = {
         media = uploaded[0];
         strapi.log.info(`[migration:007-sb79-and-oceanside] uploaded ${COVER_FILE}`);
       }
-      coverId = media.id;
     }
+    if (media) coverId = media.id;
 
     const existing = await strapi
       .documents('api::article.article')
