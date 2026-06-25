@@ -1,8 +1,8 @@
 import path from 'path';
 import type { Core } from '@strapi/strapi';
 
-const config = ({ env }: Core.Config.Shared.ConfigParams): Core.Config.Database => {
-  const client = env('DATABASE_CLIENT', 'sqlite');
+const config = ({ env }: Core.Config.Shared.ConfigParams) => {
+  const client = env('DATABASE_CLIENT', 'sqlite') as 'mysql' | 'postgres' | 'sqlite';
 
   const connections = {
     mysql: {
@@ -54,7 +54,7 @@ const config = ({ env }: Core.Config.Shared.ConfigParams): Core.Config.Database 
   return {
     connection: {
       client,
-      ...connections[client],
+      ...connections[client as keyof typeof connections],
       acquireConnectionTimeout: env.int('DATABASE_CONNECTION_TIMEOUT', 60000),
     },
   };

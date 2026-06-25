@@ -157,6 +157,7 @@ tests/cli/.env
 ############################
 CLAUDE.local.md
 .claude
+.firecrawl/
 
 ############################
 # Strapi
