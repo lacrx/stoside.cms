@@ -23,25 +23,33 @@ export const migration = {
 
       if (!article) continue;
 
-      const data: Record<string, string> = {};
+      const updates: string[] = [];
 
       if ('title' in fix && article.title !== fix.title) {
-        data.title = fix.title;
-      }
-      if (!String(article.publishedAt ?? '').startsWith(fix.publishedAt.slice(0, 10))) {
-        data.publishedAt = fix.publishedAt;
+        await strapi.documents('api::article.article').update({
+          documentId: article.documentId,
+          data: { title: fix.title },
+          status: 'published',
+        });
+        updates.push('title');
       }
 
-      if (Object.keys(data).length === 0) continue;
+      // Document service overrides publishedAt with NOW() on publish,
+      // so set it via the query engine which writes directly.
+      const needsDate = !String(article.publishedAt ?? '').startsWith(fix.publishedAt.slice(0, 10));
+      if (needsDate) {
+        await strapi.db.query('api::article.article').updateMany({
+          where: { documentId: article.documentId },
+          data: { publishedAt: fix.publishedAt },
+        });
+        updates.push('publishedAt');
+      }
 
-      await strapi.documents('api::article.article').update({
-        documentId: article.documentId,
-        data,
-        status: 'published',
-      });
-      strapi.log.info(
-        `[migration:009-fix-article-titles-dates] updated "${fix.slug}": ${Object.keys(data).join(', ')}`
-      );
+      if (updates.length > 0) {
+        strapi.log.info(
+          `[migration:009-fix-article-titles-dates] updated "${fix.slug}": ${updates.join(', ')}`
+        );
+      }
     }
   },
 };
