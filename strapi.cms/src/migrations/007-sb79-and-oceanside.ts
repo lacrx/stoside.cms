@@ -11,9 +11,9 @@ const IMG_CDN =
 const blocks = [
   {
     __component: 'shared.rich-text' as const,
-    body: `SB 79 takes full effect statewide on July 1, 2026. The premise is straightforward: let people build multi-family homes, townhomes, and mixed-use apartments within a half-mile of high-capacity transit stations.
+    body: `SB 79 takes full effect statewide on July 1st, 2026. The premise is straightforward: let people build multi-family homes, townhomes, and mixed-use apartments within a half-mile of high-capacity transit stations.
 
-On June 3, the Oceanside City Council voted 4-0 (Council member Weiss was absent) to introduce an ordinance that explicitly seeks to "exempt and/or defer all sites that could potentially be exempted or deferred" and "reduce SB 79's impact to the greatest extent possible." The deferral runs until one year after the 7th Housing Element revision on June 15, 2032, which is six years from now.
+On June 3rd, the Oceanside City Council voted 4-0 (Council member Weiss was absent) to introduce an ordinance that explicitly seeks to "exempt and/or defer all sites that could potentially be exempted or deferred" and "reduce SB 79's impact to the greatest extent possible." The deferral runs until one year after the 7th Housing Element revision on June 15th, 2032, which is six years from now.
 
 It should be noted that the city says it's working on a TOD Alternative Plan, projected for late 2026 or early 2027, that could choose to unfreeze some deferred sites before 2032. But 2032 is the ordinance's stated default and nothing compels earlier action with no binding deadline. Trust is earned, and the rest of the ordinance reads as a wink and a nod to maximum temporal deferment, which is a hair's breadth away from the maximum, illegal, geographical deferments and permanent exemptions already explicitly committed to. If we're already committing millions in public funds towards a legal loss, why would we think Council wouldn't commit a few million more?
 
@@ -39,11 +39,11 @@ Mayor Esther Sanchez acknowledged the vote was a calculated legal maneuver to ex
 
 ![Presentation from staff to City Council, maps and conditions for exemptions and referrals](${IMG_CDN}cd70d2f4-1413-44c3-a110-38c5e159a887_474x250.jpeg)
 
-*Presentation from staff to City Council, maps and conditions for exemptions and referrals. June 3, 2026.*
+*Presentation from staff to City Council, maps and conditions for exemptions and referrals. June 3rd, 2026.*
 
 The city is using its own disinvestment to justify exclusion. SB 79 lets cities exempt parcels without a "walking path" under one mile to a transit stop. The intent of this provision is to give a good-faith exemption for people cut off by freeways, rivers, etc. who have a meaningful obstruction to their nearest transit stop.
 
-Oceanside, however, defined a "walking path" to require a continuous paved sidewalk with no gaps for the entire route. All 710 parcels they analyzed scored zero. But their own sidewalk inventory shows 71% of road segments in the study area near stations have sidewalks. Staff said at the May 18 Planning Commission hearing: "There is no definition of walking path in the statute, so the city created our own definition."
+Oceanside, however, defined a "walking path" to require a continuous paved sidewalk with no gaps for the entire route. All 710 parcels they analyzed scored zero. But their own sidewalk inventory shows 71% of road segments in the study area near stations have sidewalks. Staff said at the May 18th Planning Commission hearing: "There is no definition of walking path in the statute, so the city created our own definition."
 
 ![Presentation from staff to City Council, sidewalk analysis](${IMG_CDN}bb730686-8af7-4327-b8ae-9dd2dd108a39_474x250.jpeg)
 
@@ -51,7 +51,7 @@ Oceanside, however, defined a "walking path" to require a continuous paved sidew
 
 ![Presentation from staff to City Council, sidewalk analysis](${IMG_CDN}f98f74cc-8a65-408e-b333-79032506caef_474x234.jpeg)
 
-*Presentation from staff to City Council, maps and conditions for exemptions and referrals. June 3, 2026.*
+*Presentation from staff to City Council, maps and conditions for exemptions and referrals. June 3rd, 2026.*
 
 The most brazen piece to this ordinance is the train miscount at OTC. The station handles 68 Sprinter, 30 Coaster, 26 Pacific Surfliner, and 6 Metrolink trains per day for a total of 130. State law classifies any station serving over 72 trains per day as Tier 1. The City of Oceanside, with Council's blessing, is trying to pretend that every train except the Sprinter doesn't exist. Add any of the other train lines to the Sprinter count and OTC clears Tier 1.
 
@@ -65,7 +65,7 @@ So follow the city's logic: Coaster, Surfliner, and Metrolink trains are not tra
 
 ![Presentation from staff to City Council, tier analysis](${IMG_CDN}84c65ffa-b716-444a-a2a6-2742abd9f61f_720x355.jpeg)
 
-*Presentation from staff to City Council, maps and conditions for exemptions and referrals. June 3, 2026.*`,
+*Presentation from staff to City Council, maps and conditions for exemptions and referrals. June 3rd, 2026.*`,
   },
   {
     __component: 'shared.rich-text' as const,
