@@ -10,10 +10,6 @@ const FIXES = [
     slug: 'sb79-and-oceanside',
     publishedAt: '2026-06-23T12:00:00.000Z',
   },
-  {
-    slug: 'downtown-isnt-perfect',
-    publishedAt: '2026-06-30T12:00:00.000Z',
-  },
 ] as const;
 
 export const migration = {

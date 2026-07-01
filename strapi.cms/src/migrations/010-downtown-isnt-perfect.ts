@@ -130,6 +130,10 @@ export const migration = {
         },
         status: 'published',
       });
+      await strapi.db.query('api::article.article').updateMany({
+        where: { slug: SLUG },
+        data: { publishedAt: '2026-06-30T12:00:00.000Z' },
+      });
       strapi.log.info(`[migration:010-downtown-isnt-perfect] refreshed existing article`);
       return;
     }
@@ -154,5 +158,12 @@ export const migration = {
       status: 'published',
     });
     strapi.log.info(`[migration:010-downtown-isnt-perfect] created article "${SLUG}"`);
+
+    // Document service overrides publishedAt with NOW() on publish,
+    // so set it via the query engine which writes directly.
+    await strapi.db.query('api::article.article').updateMany({
+      where: { slug: SLUG },
+      data: { publishedAt: '2026-06-30T12:00:00.000Z' },
+    });
   },
 };
