@@ -2,9 +2,6 @@
 #
 # Usage:
 #   docker compose -f docker-compose.prod.yml --env-file .env.production up -d
-#
-# First run will build the Strapi image and start PostgreSQL.
-# Strapi auto-migrates the database on first boot.
 
 services:
   caddy:
@@ -27,32 +24,10 @@ services:
     env_file: .env.production
     ports:
       - '1337:1337'
-    environment:
-      DATABASE_CLIENT: postgres
-      DATABASE_HOST: db
-      DATABASE_PORT: '5432'
-      DATABASE_NAME: strapi
-      DATABASE_USERNAME: strapi
-    depends_on:
-      db:
-        condition: service_healthy
-
-  db:
-    image: postgres:16-alpine
-    restart: unless-stopped
-    environment:
-      POSTGRES_DB: strapi
-      POSTGRES_USER: strapi
-      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
     volumes:
-      - pgdata:/var/lib/postgresql/data
-    healthcheck:
-      test: ['CMD-SHELL', 'pg_isready -U strapi -d strapi']
-      interval: 10s
-      timeout: 5s
-      retries: 5
+      - strapi_data:/app/.tmp
 
 volumes:
-  pgdata:
+  strapi_data:
   caddy_data:
   caddy_config:

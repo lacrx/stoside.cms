@@ -29,6 +29,7 @@ RUN npm run build
 FROM base AS runner
 
 ENV NODE_ENV=production
+ENV NODE_OPTIONS=--max-old-space-size=768
 
 RUN addgroup --system --gid 1001 strapi && \
     adduser  --system --uid 1001 strapi
@@ -44,8 +45,10 @@ RUN echo '{"compilerOptions":{"outDir":"dist"},"include":["_placeholder.ts"]}' >
     echo 'export {}' > _placeholder.ts && \
     chown strapi:strapi tsconfig.json _placeholder.ts
 
-# Strapi needs these dirs at runtime
+# .tmp holds SQLite DB (mount as Docker volume for persistence)
 RUN mkdir -p .tmp public/uploads database/migrations && chown -R strapi:strapi .tmp public/uploads database
+
+VOLUME /app/.tmp
 
 USER strapi
 
