@@ -3,5 +3,9 @@
 }
 
 cms.stoside.org {
-	reverse_proxy strapi:1337
+	reverse_proxy stoside-strapi:1337
+}
+
+cms.ncyimby.org {
+	reverse_proxy ncyimby-strapi:1337
 }

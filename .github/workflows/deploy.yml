@@ -59,7 +59,7 @@ jobs:
             git merge --ff-only origin/main
             cd strapi.cms
             echo "$GHCR_TOKEN" | docker login ghcr.io -u "$GHCR_USER" --password-stdin
-            docker compose -f docker-compose.prod.yml --env-file .env.production pull strapi
+            docker compose -f docker-compose.prod.yml --env-file .env.production pull stoside-strapi
             docker compose -f docker-compose.prod.yml --env-file .env.production up -d --force-recreate --remove-orphans
             docker logout ghcr.io
             echo "Waiting for Strapi to start..."

@@ -1,4 +1,6 @@
 # Production Docker Compose for Strapi CMS on EC2.
+# Caddy reverse-proxies both stoside and ncyimby CMS instances via the
+# shared cms-net Docker network.
 #
 # Usage:
 #   docker compose -f docker-compose.prod.yml --env-file .env.production up -d
@@ -16,9 +18,11 @@ services:
       - caddy_data:/data
       - caddy_config:/config
     depends_on:
-      - strapi
+      - stoside-strapi
+    networks:
+      - cms-net
 
-  strapi:
+  stoside-strapi:
     image: ghcr.io/lacrx/stoside.cms:latest
     restart: unless-stopped
     env_file: .env.production
@@ -26,8 +30,14 @@ services:
       - '1337:1337'
     volumes:
       - strapi_data:/app/.tmp
+    networks:
+      - cms-net
 
 volumes:
   strapi_data:
   caddy_data:
   caddy_config:
+
+networks:
+  cms-net:
+    name: cms-net
