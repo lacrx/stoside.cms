@@ -29,12 +29,12 @@ services:
     ports:
       - '1337:1337'
     volumes:
-      - strapi_data:/app/.tmp
+      - stoside_data:/app/.tmp
     networks:
       - cms-net
 
 volumes:
-  strapi_data:
+  stoside_data:
   caddy_data:
   caddy_config:
 
