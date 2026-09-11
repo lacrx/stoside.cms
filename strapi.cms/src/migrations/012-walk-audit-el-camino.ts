@@ -6,12 +6,30 @@ export const migration = {
   id: '012-walk-audit-el-camino',
   description: 'Seed walk audit "El Camino, Mission, Douglas"',
   async run(strapi: Core.Strapi) {
-    const existing = await strapi
-      .documents('api::walk-audit.walk-audit')
-      .findFirst({ filters: { slug: SLUG }, status: 'published' });
+    // Deduplicate: earlier version of this migration created duplicates
+    const allRows = await strapi.db
+      .query('api::walk-audit.walk-audit')
+      .findMany({ where: { slug: SLUG } });
+    if (allRows.length > 1) {
+      const [keep, ...dupes] = allRows;
+      for (const dupe of dupes) {
+        await strapi.db.query('api::walk-audit.walk-audit').delete({ where: { id: dupe.id } });
+      }
+      strapi.log.info(
+        `[migration:012-walk-audit-el-camino] removed ${dupes.length} duplicate(s), kept id=${keep.id}`
+      );
+    }
+
+    const existing = await strapi.db
+      .query('api::walk-audit.walk-audit')
+      .findOne({ where: { slug: SLUG } });
 
     if (existing) {
-      strapi.log.info(`[migration:012-walk-audit-el-camino] already exists, skipping`);
+      await strapi.db.query('api::walk-audit.walk-audit').updateMany({
+        where: { slug: SLUG },
+        data: { publishedAt: '2026-09-11T12:00:00.000Z' },
+      });
+      strapi.log.info(`[migration:012-walk-audit-el-camino] already exists, fixed publishedAt`);
       return;
     }
 
@@ -37,7 +55,7 @@ export const migration = {
 
     await strapi.db.query('api::walk-audit.walk-audit').updateMany({
       where: { slug: SLUG },
-      data: { publishedAt: '2026-09-12T12:00:00.000Z' },
+      data: { publishedAt: '2026-09-11T12:00:00.000Z' },
     });
   },
 };
