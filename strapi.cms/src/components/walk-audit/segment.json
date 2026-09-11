@@ -1,0 +1,15 @@
+{
+  "collectionName": "components_walk_audit_segments",
+  "info": {
+    "displayName": "Segment",
+    "icon": "map-pin",
+    "description": "A named segment within a walk audit route"
+  },
+  "options": {},
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true
+    }
+  }
+}

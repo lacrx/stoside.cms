@@ -36,11 +36,24 @@ export interface SharedVisualization extends Struct.ComponentSchema {
   };
 }
 
+export interface WalkAuditSegment extends Struct.ComponentSchema {
+  collectionName: 'components_walk_audit_segments';
+  info: {
+    description: 'A named segment within a walk audit route';
+    displayName: 'Segment';
+    icon: 'map-pin';
+  };
+  attributes: {
+    name: Schema.Attribute.String & Schema.Attribute.Required;
+  };
+}
+
 declare module '@strapi/strapi' {
   export module Public {
     export interface ComponentSchemas {
       'shared.rich-text': SharedRichText;
       'shared.visualization': SharedVisualization;
+      'walk-audit.segment': WalkAuditSegment;
     }
   }
 }
