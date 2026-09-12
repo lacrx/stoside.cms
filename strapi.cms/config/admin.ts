@@ -1,18 +1,24 @@
 import type { Core } from '@strapi/strapi';
 
+function requireEnv(env: Core.Config.Shared.ConfigParams['env'], key: string): string {
+  const val = env(key);
+  if (!val) throw new Error(`Missing required env var: ${key}`);
+  return val;
+}
+
 const adminConfig = ({ env }: Core.Config.Shared.ConfigParams): Core.Config.Admin => ({
   auth: {
-    secret: env('ADMIN_JWT_SECRET', 'example-token'),
+    secret: requireEnv(env, 'ADMIN_JWT_SECRET'),
   },
   apiToken: {
-    salt: env('API_TOKEN_SALT', 'example-salt'),
+    salt: requireEnv(env, 'API_TOKEN_SALT'),
   },
   secrets: {
-    encryptionKey: env('ENCRYPTION_KEY', 'example-key'),
+    encryptionKey: requireEnv(env, 'ENCRYPTION_KEY'),
   },
   transfer: {
     token: {
-      salt: env('TRANSFER_TOKEN_SALT', 'example-salt'),
+      salt: requireEnv(env, 'TRANSFER_TOKEN_SALT'),
     },
   },
   flags: {

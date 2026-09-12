@@ -1,5 +1,33 @@
 import type { Core } from '@strapi/strapi';
 
+const ARTICLE_DATA = {
+  title: 'Our Wealth is Downtown.',
+  description: 'A value-per-acre map of every parcel in Oceanside.',
+  slug: 'our-wealth-is-downtown',
+  blocks: [
+    {
+      __component: 'shared.rich-text' as const,
+      body: "Downtown subsidizes the rest of Oceanside. We'd love to show you why with our interactive map. You're looking at the value-per-acre for every piece of land in Oceanside. Like a compressed gem, downtown's value is great despite its small footprint. This map shows us where Oceanside has made its best investments as a city, and who contributes most to its coffers.",
+    },
+    {
+      __component: 'shared.visualization' as const,
+      vizId: 'oceanside-vpa-3d',
+      caption:
+        'Value per acre of every Oceanside parcel, 2023. Tilt/rotate with the controls or drag.',
+      height: 560,
+      align: 'inline' as const,
+    },
+    {
+      __component: 'shared.rich-text' as const,
+      body: "Suburban tax base is an oxymoron. We have spent generations laying intense infrastructure eastward to attract growth. But outward growth doesn't pay. And it's not sustainable. The city makes money from the coast and downtown. So we should treat them with respect. We need to begin making investments in our downtown again. Main Street Oceanside has never forgotten about our untapped yearning to be with each other downtown.",
+    },
+    {
+      __component: 'shared.rich-text' as const,
+      body: "We need to make downtown a pleasant place to be outside of a car. A four-lane arterial is no way to treat ourselves. We can do better. By fixing sidewalks and building benches, we're doing it.",
+    },
+  ],
+};
+
 // Seed the "Our Wealth is Downtown" article. Runs on every boot and
 // overwrites the fields below, so this migration is the source of truth
 // for the article's content. If you plan to edit the article through
@@ -9,7 +37,6 @@ export const migration = {
   id: '004-our-wealth-is-downtown',
   description: 'Seed article "our-wealth-is-downtown" + link it to Thomas LaCroix',
   async run(strapi: Core.Strapi) {
-    const slug = 'our-wealth-is-downtown';
     const author = await strapi
       .documents('api::author.author')
       .findFirst({ filters: { name: 'Thomas LaCroix' } });
@@ -21,76 +48,26 @@ export const migration = {
 
     const existing = await strapi
       .documents('api::article.article')
-      .findFirst({ filters: { slug }, status: 'published' });
+      .findFirst({ filters: { slug: ARTICLE_DATA.slug }, status: 'published' });
 
     if (!existing) {
       await strapi.documents('api::article.article').create({
-        data: {
-          title: 'Our Wealth is Downtown.',
-          description: 'A value-per-acre map of every parcel in Oceanside.',
-          slug,
-          authors,
-          blocks: [
-            {
-              __component: 'shared.rich-text',
-              body: "Downtown subsidizes the rest of Oceanside. We'd love to show you why with our interactive map. You're looking at the value-per-acre for every piece of land in Oceanside. Like a compressed gem, downtown's value is great despite its small footprint. This map shows us where Oceanside has made its best investments as a city, and who contributes most to its coffers.",
-            },
-            {
-              __component: 'shared.visualization',
-              vizId: 'oceanside-vpa-3d',
-              caption:
-                'Value per acre of every Oceanside parcel, 2023. Tilt/rotate with the controls or drag.',
-              height: 560,
-              align: 'inline',
-            },
-            {
-              __component: 'shared.rich-text',
-              body: "Suburban tax base is an oxymoron. We have spent generations laying intense infrastructure eastward to attract growth. But outward growth doesn't pay. And it's not sustainable. The city makes money from the coast and downtown. So we should treat them with respect. We need to begin making investments in our downtown again. Main Street Oceanside has never forgotten about our untapped yearning to be with each other downtown.",
-            },
-            {
-              __component: 'shared.rich-text',
-              body: "We need to make downtown a pleasant place to be outside of a car. A four-lane arterial is no way to treat ourselves. We can do better. By fixing sidewalks and building benches, we're doing it.",
-            },
-          ],
-        },
+        data: { ...ARTICLE_DATA, authors },
         status: 'published',
       });
-      strapi.log.info(`[migration:004-our-wealth-is-downtown] created article "${slug}"`);
+      strapi.log.info(
+        `[migration:004-our-wealth-is-downtown] created article "${ARTICLE_DATA.slug}"`
+      );
       return;
     }
 
     await strapi.documents('api::article.article').update({
       documentId: existing.documentId,
-      data: {
-        title: 'Our Wealth is Downtown.',
-        description: 'A value-per-acre map of every parcel in Oceanside.',
-        slug,
-        authors,
-        blocks: [
-          {
-            __component: 'shared.rich-text',
-            body: "Downtown subsidizes the rest of Oceanside. We'd love to show you why with our interactive map. You're looking at the value-per-acre for every piece of land in Oceanside. Like a compressed gem, downtown's value is great despite its small footprint. This map shows us where Oceanside has made its best investments as a city, and who contributes most to its coffers.",
-          },
-          {
-            __component: 'shared.visualization',
-            vizId: 'oceanside-vpa-3d',
-            caption:
-              'Value per acre of every Oceanside parcel, 2023. Tilt/rotate with the controls or drag.',
-            height: 560,
-            align: 'inline',
-          },
-          {
-            __component: 'shared.rich-text',
-            body: "Suburban tax base is an oxymoron. We have spent generations laying intense infrastructure eastward to attract growth. But outward growth doesn't pay. And it's not sustainable. The city makes money from the coast and downtown. So we should treat them with respect. We need to begin making investments in our downtown again. Main Street Oceanside has never forgotten about our untapped yearning to be with each other downtown.",
-          },
-          {
-            __component: 'shared.rich-text',
-            body: "We need to make downtown a pleasant place to be outside of a car. A four-lane arterial is no way to treat ourselves. We can do better. By fixing sidewalks and building benches, we're doing it.",
-          },
-        ],
-      },
+      data: { ...ARTICLE_DATA, authors },
       status: 'published',
     });
-    strapi.log.info(`[migration:004-our-wealth-is-downtown] refreshed article "${slug}"`);
+    strapi.log.info(
+      `[migration:004-our-wealth-is-downtown] refreshed article "${ARTICLE_DATA.slug}"`
+    );
   },
 };

@@ -39,9 +39,6 @@
       "type": "component",
       "repeatable": true,
       "component": "walk-audit.segment"
-    },
-    "summary": {
-      "type": "richtext"
     }
   }
 }
