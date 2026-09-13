@@ -54,7 +54,7 @@ jobs:
           script: |
             set -e
             cd /opt/strapi/stoside.cms
-            git fetch origin main
+            git -c credential.helper='!f() { echo "username=$GHCR_USER"; echo "password=$GHCR_TOKEN"; }; f' fetch origin main
             git checkout main 2>/dev/null || git checkout -b main origin/main
             git merge --ff-only origin/main
             cd strapi.cms
@@ -62,6 +62,12 @@ jobs:
             docker compose -f docker-compose.prod.yml --env-file .env.production pull stoside-strapi
             docker compose -f docker-compose.prod.yml --env-file .env.production up -d --force-recreate --remove-orphans
             docker logout ghcr.io
+            docker image prune -f
+
+            # Install daily SQLite backup cron (idempotent)
+            BACKUP_CMD='0 6 * * * docker cp $(docker compose -f /opt/strapi/stoside.cms/strapi.cms/docker-compose.prod.yml ps -q stoside-strapi):/app/.tmp/data.db /tmp/stoside-backup.db && aws s3 cp /tmp/stoside-backup.db s3://stoside-media/cms-backups/stoside-$(date +\%F).db && find /tmp -name "stoside-backup.db" -delete'
+            (crontab -l 2>/dev/null | grep -v "stoside-backup"; echo "$BACKUP_CMD") | crontab -
+
             echo "Waiting for Strapi to start..."
             for i in $(seq 1 20); do
               if curl -sf http://localhost:1337/api/articles > /dev/null 2>&1; then
