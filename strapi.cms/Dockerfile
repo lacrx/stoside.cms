@@ -30,6 +30,7 @@ RUN ADMIN_JWT_SECRET=build-placeholder \
     API_TOKEN_SALT=build-placeholder \
     ENCRYPTION_KEY=build-placeholder \
     TRANSFER_TOKEN_SALT=build-placeholder \
+    APP_KEYS=build-placeholder \
     npm run build
 
 # ------- production -------
