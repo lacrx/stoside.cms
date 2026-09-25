@@ -23,7 +23,14 @@ RUN \
 
 COPY . .
 ENV NODE_OPTIONS=--max-old-space-size=1536
-RUN npm run build
+# strapi build compiles the admin panel and loads config, which requires
+# these env vars to exist. Values are throwaway; real secrets are injected
+# at runtime via docker-compose .env.production.
+RUN ADMIN_JWT_SECRET=build-placeholder \
+    API_TOKEN_SALT=build-placeholder \
+    ENCRYPTION_KEY=build-placeholder \
+    TRANSFER_TOKEN_SALT=build-placeholder \
+    npm run build
 
 # ------- production -------
 FROM base AS runner
