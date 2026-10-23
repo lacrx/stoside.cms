@@ -15,6 +15,7 @@ import { migration as m013 } from './013-fix-segment-names';
 import { migration as m014 } from './014-san-clemente-wealth';
 import { migration as m015 } from './015-san-clemente-cover';
 import { migration as m016 } from './016-data-page-permissions';
+import { migration as m017 } from './017-seed-data-pages';
 
 // Add new migrations in chronological order. Each migration is a
 // check-then-mutate step against Strapi's Document Service API. Running
@@ -45,6 +46,7 @@ const migrations = [
   m014,
   m015,
   m016,
+  m017,
 ];
 
 export async function runMigrations(strapi: Core.Strapi) {

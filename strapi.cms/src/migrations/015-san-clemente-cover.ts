@@ -21,11 +21,15 @@ export const migration = {
 
     const stats = fs.statSync(filePath);
     const diskSizeKb = Math.round(stats.size / 1024);
-    const headBuf = fs.readFileSync(filePath).subarray(0, 16 * 1024);
+    const fd = fs.openSync(filePath, 'r');
+    const headBuf = Buffer.alloc(Math.min(16 * 1024, stats.size));
+    fs.readSync(fd, headBuf, 0, headBuf.length, 0);
+    fs.closeSync(fd);
     const diskHash = crypto.createHash('sha256').update(headBuf).digest('hex').slice(0, 16);
     const freshTag = `h:${diskHash}`;
 
     let media = await strapi.query('plugin::upload.file').findOne({ where: { name: fileName } });
+    // Caption stores a content hash for drift detection; editing it in admin triggers re-upload.
     const storedTag = media?.caption ?? null;
 
     if (media && storedTag === freshTag && media.size === diskSizeKb) {
