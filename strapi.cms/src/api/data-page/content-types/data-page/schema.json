@@ -1,0 +1,51 @@
+{
+  "kind": "collectionType",
+  "collectionName": "data_pages",
+  "info": {
+    "singularName": "data-page",
+    "pluralName": "data-pages",
+    "displayName": "Data Page"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "text"
+    },
+    "slug": {
+      "type": "uid",
+      "targetField": "title"
+    },
+    "dashboardType": {
+      "type": "enumeration",
+      "enum": ["permitted-units", "affordable-units", "affordability-map"],
+      "required": true
+    },
+    "cover": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": ["images"]
+    },
+    "blocks": {
+      "type": "dynamiczone",
+      "components": ["shared.rich-text", "shared.visualization"]
+    },
+    "methodology": {
+      "type": "richtext"
+    },
+    "dataUpdatedAt": {
+      "type": "date"
+    },
+    "sortOrder": {
+      "type": "integer",
+      "default": 0
+    }
+  }
+}

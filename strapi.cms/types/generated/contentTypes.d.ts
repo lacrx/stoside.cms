@@ -415,6 +415,40 @@ export interface ApiArticleArticle extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiDataPageDataPage extends Struct.CollectionTypeSchema {
+  collectionName: 'data_pages';
+  info: {
+    displayName: 'Data Page';
+    pluralName: 'data-pages';
+    singularName: 'data-page';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    blocks: Schema.Attribute.DynamicZone<['shared.rich-text', 'shared.visualization']>;
+    cover: Schema.Attribute.Media<'images'>;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
+    dashboardType: Schema.Attribute.Enumeration<
+      ['permitted-units', 'affordable-units', 'affordability-map']
+    > &
+      Schema.Attribute.Required;
+    dataUpdatedAt: Schema.Attribute.Date;
+    description: Schema.Attribute.Text;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<'oneToMany', 'api::data-page.data-page'> &
+      Schema.Attribute.Private;
+    methodology: Schema.Attribute.RichText;
+    publishedAt: Schema.Attribute.DateTime;
+    slug: Schema.Attribute.UID<'title'>;
+    sortOrder: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
+    title: Schema.Attribute.String & Schema.Attribute.Required;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
+  };
+}
+
 export interface ApiAuthorAuthor extends Struct.CollectionTypeSchema {
   collectionName: 'authors';
   info: {
@@ -927,6 +961,7 @@ declare module '@strapi/strapi' {
       'admin::user': AdminUser;
       'api::article.article': ApiArticleArticle;
       'api::author.author': ApiAuthorAuthor;
+      'api::data-page.data-page': ApiDataPageDataPage;
       'api::site-setting.site-setting': ApiSiteSettingSiteSetting;
       'api::walk-audit.walk-audit': ApiWalkAuditWalkAudit;
       'plugin::content-releases.release': PluginContentReleasesRelease;
