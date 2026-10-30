@@ -948,6 +948,34 @@ export interface PluginUsersPermissionsUser extends Struct.CollectionTypeSchema 
   };
 }
 
+export interface ApiVisualizationVisualization extends Struct.CollectionTypeSchema {
+  collectionName: 'visualizations';
+  info: {
+    displayName: 'Visualization';
+    pluralName: 'visualizations';
+    singularName: 'visualization';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    config: Schema.Attribute.JSON;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
+    data: Schema.Attribute.JSON;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<'oneToMany', 'api::visualization.visualization'> &
+      Schema.Attribute.Private;
+    publishedAt: Schema.Attribute.DateTime;
+    source: Schema.Attribute.String;
+    title: Schema.Attribute.String;
+    type: Schema.Attribute.String & Schema.Attribute.Required;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
+    vizId: Schema.Attribute.String & Schema.Attribute.Required & Schema.Attribute.Unique;
+  };
+}
+
 declare module '@strapi/strapi' {
   export module Public {
     export interface ContentTypeSchemas {
@@ -963,6 +991,7 @@ declare module '@strapi/strapi' {
       'api::author.author': ApiAuthorAuthor;
       'api::data-page.data-page': ApiDataPageDataPage;
       'api::site-setting.site-setting': ApiSiteSettingSiteSetting;
+      'api::visualization.visualization': ApiVisualizationVisualization;
       'api::walk-audit.walk-audit': ApiWalkAuditWalkAudit;
       'plugin::content-releases.release': PluginContentReleasesRelease;
       'plugin::content-releases.release-action': PluginContentReleasesReleaseAction;

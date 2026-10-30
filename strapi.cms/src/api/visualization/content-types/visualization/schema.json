@@ -1,0 +1,36 @@
+{
+  "kind": "collectionType",
+  "collectionName": "visualizations",
+  "info": {
+    "singularName": "visualization",
+    "pluralName": "visualizations",
+    "displayName": "Visualization"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "vizId": {
+      "type": "string",
+      "required": true,
+      "unique": true
+    },
+    "type": {
+      "type": "string",
+      "required": true
+    },
+    "title": {
+      "type": "string"
+    },
+    "source": {
+      "type": "string"
+    },
+    "data": {
+      "type": "json"
+    },
+    "config": {
+      "type": "json"
+    }
+  }
+}
